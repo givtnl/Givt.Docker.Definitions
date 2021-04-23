@@ -1,0 +1,64 @@
+apiVersion: 2019-12-01
+location: westeurope
+name: givt-debug-fusionauth
+tags: {}
+type: Microsoft.ContainerInstance/containerGroups
+properties:
+  containers:
+  - name: fusionauth-app
+    properties:
+      image: givt/fusionauth-app
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 9011
+      environmentVariables:
+      - name: DATABASE_URL
+        value: jdbc:postgresql://givt-debug-fusionauth-postgres.postgres.database.azure.com:5432/postgres?sslmode=require
+      - name: DATABASE_USERNAME
+        value: fusionauth@givt-debug-fusionauth-postgres
+      - name: DATABASE_PASSWORD
+        value: uvzsjUg4F6CHeUcGuQ0dnpz1qppAXEqkMniXR9r9_k0
+      - name: FUSIONAUTH_APP_RUNTIME_MODE
+        value: production
+  - name: nginx
+    properties:
+      image:  jonasal/nginx-certbot
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 1
+      environmentVariables:
+      - name: CERTBOT_EMAIL
+        value: info@givtapp.net
+      - name: ENVSUBST_VARS
+        value: FQDN
+      - name: FQDN
+        value: auth-debug.givtapp.net
+      ports:
+      - port: 80
+      - port: 443
+      volumeMounts:
+      - name: nginxconf
+        mountPath: /etc/nginx/user.conf.d
+        readOnly: true
+      - name: letsencrypt
+        mountPath: /etc/letsencrypt
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    ports:
+    - port: 80
+    - port: 443
+    dnsNameLabel: givt-debug-fusionauth
+  volumes:
+  - name: nginxconf
+    azureFile:
+      sharename: fusionauth-nginx
+      storageAccountName: givtstoragedebug
+      storageAccountKey: u+r+4YJHzZ5W28rmo+FwON1IS8CvEtohN/vtcOGl6evLGlsBEMlfNFgZ93dW7WwFX3TcXDkdxA7y6brmRzRgRw==
+  - name: letsencrypt
+    emptyDir: {}
