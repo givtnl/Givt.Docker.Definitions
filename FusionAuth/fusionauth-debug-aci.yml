@@ -10,7 +10,7 @@ properties:
       image: givt/fusionauth-app
       resources:
         requests:
-          cpu: 1
+          cpu: 0.5
           memoryInGb: 1.5
       ports:
       - port: 9011
@@ -25,11 +25,11 @@ properties:
         value: production
   - name: nginx
     properties:
-      image:  jonasal/nginx-certbot
+      image:  staticfloat/nginx-certbot
       resources:
         requests:
-          cpu: 0.5
-          memoryInGb: 1
+          cpu: 0.2
+          memoryInGb: 0.2
       environmentVariables:
       - name: CERTBOT_EMAIL
         value: info@givtapp.net
