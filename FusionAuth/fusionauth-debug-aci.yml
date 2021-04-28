@@ -36,7 +36,7 @@ properties:
       - name: ENVSUBST_VARS
         value: FQDN
       - name: FQDN
-        value: auth-debug.givtapp.net
+        value: fusionauth-debug.givtapp.net
       ports:
       - port: 80
       - port: 443
